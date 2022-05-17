@@ -1,58 +1,74 @@
 package com.homework1;
 
+import javax.management.InvalidAttributeValueException;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import static com.homework1.CalendarWriter.removeBooking;
+class Calendar {
+    private Set<LocalDate> holidaySet = new HashSet<>();
+    private Map<LocalDate, Set<Booking>> bookings = new HashMap<>();
 
-public class Calendar {
-    private final Set<LocalDate> holidaySet = new HashSet<>();
-    private Map<LocalDate, Set<Booking>> bookings;
-
-    public Calendar() {
+    Calendar() {
     }
 
-    public Set<LocalDate> getHolidaySet() {
+    Calendar(Set<LocalDate> holidaySet, Map<LocalDate, Set<Booking>> bookings) {
+        this.holidaySet.addAll(holidaySet);
+        this.bookings.putAll(bookings);
+    }
+
+    Set<LocalDate> getHolidaySet() {
         return holidaySet;
     }
 
-    public Map<LocalDate, Set<Booking>> getBookings() {
+    Map<LocalDate, Set<Booking>> getBookings() {
         return bookings;
     }
 
-    public boolean book(LocalDate date, LocalDateTime startTime, LocalDateTime endTime, String name, String note) {
+    @Override
+    public String toString() {
+        return "Calendar{" +
+                "holidaySet=" + holidaySet +
+                ", bookings=" + bookings +
+                '}';
+    }
+
+    boolean book(LocalDate date, LocalTime startTime, LocalTime endTime, String name, String note) {
         return CalendarWriter.addBooking(this, date, new Booking(startTime, endTime, name, note));
     }
 
-    public boolean unbook(LocalDate date, LocalDateTime startTime, LocalDateTime endTime) {
+    boolean unbook(LocalDate date, LocalTime startTime, LocalTime endTime) {
         return CalendarWriter.removeBooking(this, date, startTime, endTime);
     }
 
-    public void agenda(LocalDate date) {
+    void agenda(LocalDate date) {
         System.out.println(CalendarReader.agenda(this, date));
     }
 
-    public void change(){
-        throw new UnsupportedOperationException("Not implemented yet");
+    void change(LocalDate date, LocalTime startTime, BookingFields option, String value) throws InvalidAttributeValueException {
+        CalendarWriter.updateBooking(this, date, startTime, option, value);
     }
 
-    public void find(String searchString){
+    void find(String searchString) {
         System.out.println(CalendarReader.findBookings(this, searchString));
     }
 
-    public boolean holiday(LocalDate date){
+    boolean holiday(LocalDate date) {
         return holidaySet.add(date);
     }
 
-    public void busyDays(LocalDate startDate, LocalDate endDate){
+    void busyDays(LocalDate startDate, LocalDate endDate) {
         System.out.println(CalendarReader.weekdayAnalytics(this, startDate, endDate));
     }
 
-    public void findslot(LocalDate startDate, Integer hours){
-        System.out.println(CalendarReader.findSlot(this, startDate, hours));
+    void findSlot(LocalDate startDate, Integer hours) {
+        try {
+            System.out.println(CalendarReader.findSlot(this, startDate, hours));
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
     }
 }

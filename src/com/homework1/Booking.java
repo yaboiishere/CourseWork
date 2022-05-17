@@ -1,28 +1,28 @@
 package com.homework1;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
+import java.time.LocalTime;
 
 public class Booking {
-    private LocalDateTime startTime;
-    private LocalDateTime endTime;
+    private LocalTime startTime;
+    private LocalTime endTime;
     private String name;
     private String note;
 
-    public Booking(LocalDateTime startTime, LocalDateTime endTime, String name, String note) {
+    Booking(LocalTime startTime, LocalTime endTime, String name, String note) {
         this.startTime = startTime;
         this.endTime = endTime;
         this.name = name;
         this.note = note;
     }
 
-    public Booking() {}
+    Booking() {
+    }
 
-    public LocalDateTime getStartTime() {
+    LocalTime getStartTime() {
         return startTime;
     }
 
-    public LocalDateTime getEndTime() {
+    LocalTime getEndTime() {
         return endTime;
     }
 
@@ -30,23 +30,23 @@ public class Booking {
         return name;
     }
 
-    public String getNote() {
+    String getNote() {
         return note;
     }
 
-    public void setStartTime(LocalDateTime startTime) {
+    void setStartTime(LocalTime startTime) {
         this.startTime = startTime;
     }
 
-    public void setEndTime(LocalDateTime endTime) {
+    void setEndTime(LocalTime endTime) {
         this.endTime = endTime;
     }
 
-    public void setName(String name) {
+    void setName(String name) {
         this.name = name;
     }
 
-    public void setNote(String note) {
+    void setNote(String note) {
         this.note = note;
     }
 
