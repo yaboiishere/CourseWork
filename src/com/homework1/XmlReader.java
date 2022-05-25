@@ -25,7 +25,9 @@ abstract class XmlReader {
         File file = new File(filePath);
         if (!file.exists()) {
             System.out.println("File not found. Creating...");
-            file.createNewFile();
+            if (!file.createNewFile()) {
+                throw new IOException("Could not create file.");
+            }
 
             return new Calendar();
         }
@@ -41,9 +43,7 @@ abstract class XmlReader {
             if (nextEvent.isStartElement()) {
                 StartElement startElement = nextEvent.asStartElement();
                 switch (startElement.getName().getLocalPart()) {
-                    case "booking" -> {
-                        booking = new Booking();
-                    }
+                    case "booking" -> booking = new Booking();
                     case "name" -> {
                         nextEvent = reader.nextEvent();
                         booking.setName(nextEvent.asCharacters().getData());
@@ -62,7 +62,6 @@ abstract class XmlReader {
                     }
                     case "date" -> {
                         nextEvent = reader.nextEvent();
-                        System.out.println(nextEvent.asCharacters().getData());
                         date = LocalDate.parse(nextEvent.asCharacters().getData());
                     }
                     case "holiday" -> {
@@ -74,9 +73,9 @@ abstract class XmlReader {
             if (nextEvent.isEndElement()) {
                 EndElement endElement = nextEvent.asEndElement();
                 if (endElement.getName().getLocalPart().equals("booking")) {
-                    Set<Booking> bookingSet = new HashSet<>();
+                    Set<Booking> bookingSet;
                     if (bookings.containsKey(date)) {
-                        bookingSet.addAll(bookings.get(date));
+                        bookingSet = new HashSet<>(bookings.get(date));
                         bookingSet.add(booking);
                     } else bookingSet = Set.of(booking);
                     bookings.put(date, bookingSet);
@@ -86,7 +85,6 @@ abstract class XmlReader {
         }
 
         reader.close();
-        System.out.println(new Calendar(holidaySet, bookings));
         return new Calendar(holidaySet, bookings);
     }
 }

@@ -2,11 +2,9 @@ package com.homework1;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 abstract class CalendarReader {
@@ -25,27 +23,54 @@ abstract class CalendarReader {
         return calendar.getBookings().entrySet().stream().filter(entry -> entry.getKey().isAfter(startDate) && entry.getKey().isBefore(endDate)).collect(Collectors.toMap(entry -> entry.getKey().getDayOfWeek(), entry -> entry.getValue().size()));
     }
 
-    static LocalTime findSlot(Calendar calendar, LocalDate fromDate, int hours) throws Exception {
-        LocalTime fromTime = fromDate.atStartOfDay().plusHours(8).toLocalTime();
-        LocalTime toTime = fromTime.plusHours(hours);
-        while (true) {
-            if (toTime.getHour() > 17) break;
-            if (calendar.getBookings().containsKey(fromDate)) {
-                List<Booking> bookings = calendar.getBookings().get(fromDate).stream().sorted(Comparator.comparing(Booking::getStartTime)).collect(Collectors.toList());
-                System.out.println(bookings);
+    static LocalDateTime findSlot(Calendar calendar, LocalDate fromDate, int hours) {
+        LocalDateTime fromTime = fromDate.atStartOfDay().plusHours(8);
+        LocalDateTime toTime = fromTime.plusHours(hours);
 
-                for (Booking booking : bookings) {
-                    if (toTime.isBefore(booking.getStartTime()) || toTime.equals(booking.getStartTime())) {
-                        return fromTime;
-                    }
-                    if (fromTime.isAfter(booking.getEndTime()) || fromTime.equals(booking.getEndTime())) {
-                        return fromTime;
-                    }
-                    fromTime = booking.getEndTime();
-                    toTime = fromTime.plusHours(hours);
-                }
+
+        while (true) if (calendar.getBookings().containsKey(fromTime.toLocalDate())) {
+            List<Booking> bookings = calendar
+                    .getBookings()
+                    .get(fromTime.toLocalDate())
+                    .stream()
+                    .sorted(Comparator.comparing(Booking::getStartTime))
+                    .toList();
+            if (toTime.getHour() > 17) {
+                fromTime = fromTime.plusDays(1).withHour(8);
+                toTime = fromTime.plusHours(hours);
             }
+            for (Booking booking : bookings) {
+                LocalTime endTime = booking.getEndTime();
+                if (toTime.toLocalTime().isBefore(booking.getStartTime()) || toTime.toLocalTime().equals(booking.getStartTime())
+                        || fromTime.toLocalTime().isAfter(endTime) || fromTime.toLocalTime().equals(endTime))
+                    return fromTime;
+
+            }
+            fromTime = fromTime.plusHours(1);
+            toTime = fromTime.plusHours(hours);
+        } else return fromTime;
+
+    }
+
+    static LocalDateTime findSlotInCalendars(List<Calendar> calendars, LocalDate fromDate, int hours) {
+        List<LocalDateTime> times = null;
+        LocalDateTime currentTime = fromDate.atStartOfDay().plusHours(8);
+        while (true) {
+            int index = 0;
+            for (Calendar calendar : calendars) {
+                LocalDateTime slot = findSlot(calendar, LocalDate.from(currentTime), hours);
+                if (times == null) times = new ArrayList<>();
+                times.add(index, slot);
+                index++;
+            }
+            if (checkIfAllElementsEquals(times)) return times.get(0);
+            currentTime = currentTime.plusHours(1);
+            if (currentTime.getHour() > 17) currentTime = currentTime.plusDays(1).withHour(8);
+            times = null;
         }
-        throw new Exception("No slot found");
+    }
+
+    private static boolean checkIfAllElementsEquals(List<LocalDateTime> times) {
+        return times != null && times.stream().allMatch(time -> time.equals(times.get(0)));
     }
 }

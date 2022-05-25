@@ -5,6 +5,7 @@ import javax.xml.stream.XMLStreamException;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.Arrays;
 import java.util.Scanner;
 
 class Cli {
@@ -27,7 +28,7 @@ class Cli {
             Scanner scanner = new Scanner(System.in);
             String[] commands = scanner.nextLine().split(" ");
             String command = commands[0];
-            if (!command.equals("open") && calendar == null) {
+            if (!(command.equals("open") || command.equals("help") || command.equals("exit")) && calendar == null) {
                 System.out.println("No calendar is open.");
                 continue;
             }
@@ -121,7 +122,41 @@ class Cli {
                         continue;
                     }
                     date = LocalDate.parse(commands[1]);
-                    calendar.findSlot(date, Integer.parseInt(commands[2]));
+                    int duration = Integer.parseInt(commands[2]);
+                    if (duration > 9 || duration < 1) {
+                        System.out.println("Invalid duration");
+                        continue;
+                    }
+                    calendar.findSlot(date, duration);
+                    break;
+                case "findSlotWith":
+                    if (commands.length < 4) {
+                        System.out.println("Invalid number of arguments");
+                        continue;
+                    }
+                    date = LocalDate.parse(commands[1]);
+                    String[] filePaths = Arrays.copyOfRange(commands, 3, commands.length);
+                    try {
+                        calendar.findSlotWith(date, Integer.parseInt(commands[2]), filePaths);
+                    } catch (XMLStreamException e) {
+                        System.out.println(e.getMessage());
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    break;
+                case "merge":
+                    if (commands.length < 2) {
+                        System.out.println("Invalid number of arguments");
+                        continue;
+                    }
+                    filePaths = Arrays.copyOfRange(commands, 1, commands.length);
+                    try {
+                        calendar.merge(filePaths);
+                    } catch (XMLStreamException e) {
+                        System.out.println(e.getMessage());
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                     break;
                 case "open":
                     if (commands.length != 2) {
@@ -132,7 +167,7 @@ class Cli {
                     try {
                         calendar = XmlReader.readCalendar(filePath);
                     } catch (XMLStreamException e) {
-                        System.out.println(e);
+                        System.out.println(e.getMessage());
                         calendar = new Calendar();
                         continue;
                     } catch (IOException e) {
@@ -183,6 +218,9 @@ class Cli {
                     System.out.println("holiday <date>: add a holiday");
                     System.out.println("busyDays <startDate> <endDate>: show busy days");
                     System.out.println("findSlot <date> <duration>: find a slot");
+                    System.out.println("findSlotWith <date> <duration> <file1> <file2> ... <fileN>: find a slot within the opened calendar and one or multiple calendars");
+                    System.out.println("merge <file1> <file2> ... <fileN>: merge multiple calendars into currently open calendar");
+                    break;
                 case "exit":
                     running = false;
                     System.out.println("Exiting the program...");

@@ -1,16 +1,15 @@
 package com.homework1;
 
 import javax.management.InvalidAttributeValueException;
+import javax.xml.stream.XMLStreamException;
+import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 class Calendar {
-    private Set<LocalDate> holidaySet = new HashSet<>();
-    private Map<LocalDate, Set<Booking>> bookings = new HashMap<>();
+    private final Set<LocalDate> holidaySet = new HashSet<>();
+    private final Map<LocalDate, Set<Booking>> bookings = new HashMap<>();
 
     Calendar() {
     }
@@ -70,5 +69,20 @@ class Calendar {
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
+    }
+
+    void findSlotWith(LocalDate startDate, Integer hours, String[] filePaths) throws XMLStreamException, IOException {
+        List<Calendar> calendars = new ArrayList<>();
+        calendars.add(this);
+        for (String filePath : filePaths) calendars.add(XmlReader.readCalendar(filePath));
+        System.out.println(CalendarReader.findSlotInCalendars(calendars, startDate, hours));
+    }
+
+    void merge(String[] filePaths) throws XMLStreamException, IOException {
+        List<Calendar> calendars = new ArrayList<>();
+        calendars.add(this);
+        for (String filePath : filePaths) calendars.add(XmlReader.readCalendar(filePath));
+        if (CalendarWriter.merge(calendars) != null) System.out.println("Calendars merged successfully");
+        else System.out.println("Calendars could not be merged");
     }
 }
