@@ -2,6 +2,13 @@
 <calendar>
     <bookings>
         <booking>
+            <date>2022-05-31</date>
+            <name>test123</name>
+            <note>asdasdasd asdasdasd</note>
+            <startTime>12:00</startTime>
+            <endTime>13:00</endTime>
+        </booking>
+        <booking>
             <date>2022-05-20</date>
             <name>test1</name>
             <note>testDesc</note>
@@ -28,20 +35,6 @@
             <note>testDesc</note>
             <startTime>08:00</startTime>
             <endTime>12:00</endTime>
-        </booking>
-        <booking>
-            <date>2022-05-17</date>
-            <name>test5</name>
-            <note>testDesc</note>
-            <startTime>14:00</startTime>
-            <endTime>17:00</endTime>
-        </booking>
-        <booking>
-            <date>2022-05-17</date>
-            <name>test6</name>
-            <note>testDesc</note>
-            <startTime>12:00</startTime>
-            <endTime>13:00</endTime>
         </booking>
     </bookings>
     <holidays>

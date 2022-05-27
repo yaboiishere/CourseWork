@@ -20,7 +20,12 @@ abstract class CalendarReader {
     }
 
     static Map<DayOfWeek, Integer> weekdayAnalytics(Calendar calendar, LocalDate startDate, LocalDate endDate) {
-        return calendar.getBookings().entrySet().stream().filter(entry -> entry.getKey().isAfter(startDate) && entry.getKey().isBefore(endDate)).collect(Collectors.toMap(entry -> entry.getKey().getDayOfWeek(), entry -> entry.getValue().size()));
+        return calendar
+                .getBookings()
+                .entrySet()
+                .stream()
+                .filter(entry -> entry.getKey().isAfter(startDate) && entry.getKey().isBefore(endDate))
+                .collect(Collectors.toMap(entry -> entry.getKey().getDayOfWeek(), entry -> entry.getValue().size()));
     }
 
     static LocalDateTime findSlot(Calendar calendar, LocalDate fromDate, int hours) {

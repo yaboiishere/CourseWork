@@ -34,7 +34,7 @@ class Cli {
             }
             switch (command) {
                 case "book":
-                    if (commands.length != 6) {
+                    if (commands.length < 6) {
                         System.out.println("Invalid number of arguments");
                         continue;
                     }
@@ -42,8 +42,7 @@ class Cli {
                     LocalTime startTime = LocalTime.parse(commands[2]);
                     LocalTime endTime = LocalTime.parse(commands[3]);
                     String name = commands[4];
-                    String note = commands[5];
-
+                    String note = String.join(" ", Arrays.copyOfRange(commands, 5, commands.length));
                     if (calendar.book(date, startTime, endTime, name, note))
                         System.out.println("Booking added successfully");
                     else
@@ -72,14 +71,16 @@ class Cli {
                     calendar.agenda(date);
                     break;
                 case "change":
-                    if (commands.length != 5) {
+                    if (commands.length < 6) {
                         System.out.println("Invalid number of arguments");
                         continue;
                     }
                     date = LocalDate.parse(commands[1]);
                     startTime = LocalTime.parse(commands[2]);
+                    note = String.join(" ", Arrays.copyOfRange(commands, 5, commands.length));
+
                     try {
-                        calendar.change(date, startTime, BookingFields.valueOf(commands[3]), commands[4]);
+                        calendar.change(date, startTime, BookingFields.valueOf(commands[3]), note);
                         System.out.println("Booking updated successfully");
                     } catch (IllegalArgumentException e) {
                         System.out.println("Invalid option");
