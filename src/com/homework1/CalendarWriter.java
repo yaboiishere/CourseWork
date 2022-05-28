@@ -16,10 +16,9 @@ public abstract class CalendarWriter {
             Set<Booking> bookingSet = new java.util.HashSet<>();
             bookingSet.add(booking);
             calendar.getBookings().put(date, bookingSet);
-            return true;
         }
 
-        return false;
+        return true;
     }
 
     static boolean removeBooking(Calendar calendar, LocalDate date, Booking booking) {
@@ -68,6 +67,7 @@ public abstract class CalendarWriter {
         Calendar rootCalendar = calendars.get(0);
         Map<LocalDate, Set<Booking>> rootBookings = rootCalendar.getBookings();
         for (int i = 1; i < calendars.size(); i++) {
+            System.out.println("Merging calendar " + i + " of " + calendars.size());
             Map<LocalDate, Set<Booking>> bookings = calendars.get(i).getBookings();
 
             bookings.keySet().forEach((date) -> {
@@ -85,6 +85,7 @@ public abstract class CalendarWriter {
                                 System.out.println("Incoming booking\n" + booking + "\noverlaps with current booking\n" + rootBooking);
                                 System.out.println("Pick booking to keep! 1: for incoming, 2: for current");
                                 while (true) {
+                                    System.out.println(">");
                                     Scanner scanner = new Scanner(System.in);
                                     int choice = scanner.nextInt();
                                     boolean success = false;
@@ -107,8 +108,8 @@ public abstract class CalendarWriter {
                 } else rootBookings.put(date, bookings.get(date));
             });
             rootCalendar.getHolidaySet().addAll(calendars.get(i).getHolidaySet());
-            calendars.clear();
         }
+        calendars.clear();
 
         return rootCalendar;
     }

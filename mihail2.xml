@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<calendar>
+    <bookings>
+        <booking>
+            <date>2022-05-31</date>
+            <name>work</name>
+            <note>Implement AWS mechanical turk</note>
+            <startTime>10:00</startTime>
+            <endTime>11:00</endTime>
+        </booking>
+        <booking>
+            <date>2022-05-31</date>
+            <name>Work</name>
+            <note>Curse clients</note>
+            <startTime>13:45</startTime>
+            <endTime>15:00</endTime>
+        </booking>
+        <booking>
+            <date>2022-06-02</date>
+            <name>work</name>
+            <note>Implement AWS mechanical turk again</note>
+            <startTime>10:00</startTime>
+            <endTime>11:00</endTime>
+        </booking>
+        <booking>
+            <date>2022-06-02</date>
+            <name>Work</name>
+            <note>Curse clients</note>
+            <startTime>13:45</startTime>
+            <endTime>15:00</endTime>
+        </booking>
+    </bookings>
+</calendar>
